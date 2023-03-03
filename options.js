@@ -9,7 +9,6 @@ module.exports = {
 			]
 		})
 	},
-
 	againOptions: {
 		reply_markup: JSON.stringify({
 			inline_keyboard: [
@@ -20,19 +19,6 @@ module.exports = {
 			]
 		})
 	},
-
-	homeKeayboardOptions: {
-		reply_markup: {
-			resize_keyboard: true,
-			one_time_keyboard: false,
-			keyboard: [
-				['yes', 'Okay'],
-				['no', 'Go', 'Yes'],
-				['no', 'Go', 'Yetye', 'Yeah']
-			],
-		},
-	},
-
 	homeOptions: {
 		reply_markup: JSON.stringify({
 			inline_keyboard: [
@@ -43,7 +29,6 @@ module.exports = {
 			]
 		})
 	},
-
 	infoOptions: {
 		reply_markup: JSON.stringify({
 			inline_keyboard: [
@@ -53,7 +38,6 @@ module.exports = {
 			]
 		})
 	},
-
 	supportOptions: {
 		reply_markup: JSON.stringify({
 			inline_keyboard: [
@@ -61,5 +45,74 @@ module.exports = {
 
 			]
 		})
-	}
+	},
+	homeKeyboardOptions: {
+		reply_markup: {
+			resize_keyboard: true,
+			one_time_keyboard: false,
+			keyboard: [
+				['\u{1F33A} Shop', '\u{1F464} Profile'],
+				['\u{1F64C} How To Order', '\u{1F4DD} List Of Stores'],
+				['\u{1F69A} Shipping Details', '\u{1F4B0} Currency Rate'],
+				['\u{1F4E2} Our Channels', '\u{1F4CC} About us']
+			],
+		},
+	},
+
+	profileKeayboardOptions: {
+		reply_markup: {
+			resize_keyboard: true,
+			one_time_keyboard: false,
+			keyboard: [
+				['\u{1F33A} Shop', 'Profile'],
+				['Back Home'],
+			],
+		},
+	},
+	shopKeayboardOptions: {
+		reply_markup: {
+			resize_keyboard: true,
+			one_time_keyboard: false,
+			keyboard: [
+				['Women', 'Men'],
+				['Kids', 'All Products'],
+				['Back Home'],
+			],
+		},
+	},
+	womenKeyboardOptions: {
+		reply_markup: {
+			resize_keyboard: true,
+			one_time_keyboard: false,
+			keyboard: [
+				['Shoes W', 'Top W'],
+				['Bottom W', 'Accessories W'],
+				['Back Shop'],
+			],
+		},
+	},
+	shoesWomenKeyboardOptions: {
+		reply_markup: {
+			resize_keyboard: true,
+			one_time_keyboard: false,
+			keyboard: [
+				['30-34 W Shoes', '34-38 W Shoes'],
+				['38-42 W Shoes', 'All sizes W Shoes'],
+				['Back Women'],
+			],
+		},
+	},
+	topWomenKeyboardOptions: {
+		reply_markup: {
+			resize_keyboard: true,
+			one_time_keyboard: false,
+			keyboard: [
+				['XSx W Top', 'S W Top'],
+				['M W Top', 'L W Top'],
+				['XLx W Top', 'All sizes W Top'],
+				['Back Women'],
+			],
+		},
+	},
+	
 }
