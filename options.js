@@ -1,4 +1,5 @@
 module.exports = {
+	//inline buttons
 	gameOptions: {
 		reply_markup: JSON.stringify({
 			inline_keyboard: [
@@ -46,6 +47,16 @@ module.exports = {
 			]
 		})
 	},
+	productPageInlineButtons: {
+		reply_markup: JSON.stringify({
+			inline_keyboard: [
+				[{text: 'Page 1', callback_data: 'productpage1'}, {text: '>>', callback_data: 'productPageNext1'}],
+
+			]
+		})
+	},
+
+	//keyboard buttons
 	homeKeyboardOptions: {
 		reply_markup: {
 			resize_keyboard: true,

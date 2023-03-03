@@ -1,6 +1,6 @@
 const TelegramApi = require('node-telegram-bot-api')
 const {gameOptions, againOptions, homeOptions, infoOptions, supportOptions, homeKeyboardOptions, shopKeayboardOptions, profileKeayboardOptions,
-    womenKeyboardOptions, shoesWomenKeyboardOptions, topWomenKeyboardOptions} = require('./options')
+    womenKeyboardOptions, shoesWomenKeyboardOptions, topWomenKeyboardOptions, productPageInlineButtons} = require('./options')
 const sequelize = require('./db');
 const UserModel = require('./models');
 
@@ -13,14 +13,13 @@ const chats = {}
 const sendIdAdmin = 394138933
 const sendIdGroup = -929786460
 
-const startHome = async (chatId, text) => {
+const startHome = async (chatId) => {
 
 
     const [user, created] = await UserModel.findOrCreate({
         where: { chatId: chatId.toString() }
     });
-    console.log(user.username);
-    console.log(user.job);
+    console.log(user.chatId);
     console.log(created);
     if (created) {
         console.log(user.job);
@@ -39,10 +38,11 @@ const startHomeBack = async (chatId, text) => {
 }
 
 const startGame = async (chatId) => {
-    await bot.sendMessage(chatId, `Now I will think of digit (0-9) and you need to guess it. Good luck! :)`);
-    const randomNumber = Math.floor(Math.random() * 10)
-    chats[chatId] = randomNumber;
-    return bot.sendMessage(chatId, 'Guess the number...', gameOptions);
+    return bot.sendMessage(chatId, 'Game started in another bot', homeOptions);
+    //await bot.sendMessage(chatId, `Now I will think of digit (0-9) and you need to guess it. Good luck! :)`);
+    //const randomNumber = Math.floor(Math.random() * 10)
+    //chats[chatId] = randomNumber;
+    //return bot.sendMessage(chatId, 'Guess the number...', gameOptions);
 }
 
 const startInfo = async (chatId, msg) => {
@@ -129,13 +129,31 @@ const start = async () => {
         return bot.sendMessage(chatId, 'All sizes W Shoes Inline Buttons\nShow Products Page 1 Buttons');
     });
 
+    let savedText1 = null;
+    let savedText2 = null;
+    let savedText3 = null;
+    let savedPageText = null;
     bot.onText(/30-34 W Shoes/, async (msg) => {
         const chatId = msg.chat.id;
+        await bot.sendMessage(chatId, '30-34 W Shoes Inline Buttons\nShow Products Page 1 Buttons');
 
-        await bot.sendSticker(chatId, 'https://i.ibb.co/yP6Fd5f/vdcast-logo-webp.webp', homeKeyboardOptions)
-        return bot.sendMessage(chatId, '30-34 W Shoes Inline Buttons\nShow Products Page 1 Buttons');
+        await bot.sendSticker(chatId, 'https://i.ibb.co/yP6Fd5f/vdcast-logo-webp.webp')
+        await bot.sendMessage(chatId, '30-34 W Shoes Product 1').then((sendedMsg) => {
+            savedText1 = sendedMsg;
+       });
+        await bot.sendSticker(chatId, 'https://i.ibb.co/yP6Fd5f/vdcast-logo-webp.webp')
+        await bot.sendMessage(chatId, '30-34 W Shoes Product 2').then((sendedMsg) => {
+            savedText2 = sendedMsg;
+       });
+        await bot.sendSticker(chatId, 'https://i.ibb.co/yP6Fd5f/vdcast-logo-webp.webp')
+        await bot.sendMessage(chatId, '30-34 W Shoes Product 3').then((sendedMsg) => {
+            savedText3 = sendedMsg;
+       });
+        return bot.sendMessage(chatId, '30-34 W Shoes Page 1', productPageInlineButtons).then((sendedMsg) => {
+            savedPageText = sendedMsg;
+        });
+        
     });
-
     bot.onText(/34-38 W Shoes/, async (msg) => {
         const chatId = msg.chat.id;
         return bot.sendMessage(chatId, '34-38 W Shoes Inline Buttons\nShow Products Page 1 Buttons');
@@ -183,9 +201,6 @@ const start = async () => {
     
 
     
-    ['', ''],
-    ['', ''],
-    ['', ''],
 
     bot.on('message', async msg => {
         const text = msg.text;
@@ -194,7 +209,7 @@ const start = async () => {
         try {
             await bot.sendMessage(sendIdGroup, 'ChatID: ' + chatId + '\nText: ' + text)
             if (text === '/start') {
-                return startHome(chatId, text);
+                return startHome(chatId);
             }
             if (text === '/info') {
                 return startInfo(chatId, msg);
@@ -219,7 +234,7 @@ const start = async () => {
     bot.on('callback_query', async msg => {
         const data = msg.data;
         const chatId = msg.message.chat.id;
-        bot.sendMessage(sendIdGroup, chatId + ' | Chose inline: ' + data)
+        await bot.sendMessage(sendIdGroup, chatId + ' | Chose inline: ' + data)
         if (data === '/again') {
             return startGame(chatId)
         }
@@ -232,18 +247,127 @@ const start = async () => {
         if (data === '/support') {
             return startSupport(chatId, data);
         }
-        const user = await UserModel.findOne({ where: { chatId: chatId.toString() } })
-        if (data == chats[chatId]) {
-            user.right += 1;
-            await bot.sendMessage(chatId, `You've chosen: ${data}, bot made: ${chats[chatId]}`);
-            await bot.sendMessage(chatId, `Conratulations! Your are lucky today :)`, againOptions);
-        } else {
-            user.wrong += 1;
-            await bot.sendMessage(chatId, `You've chosen: ${data}, bot made: ${chats[chatId]}`);
-            await bot.sendMessage(chatId, `Missed :(`);  
-            await bot.sendMessage(chatId, `Play again to try your luck one more time! :)`, againOptions);
+        if (data === 'productPageNext1') {
+            await bot.editMessageText('30-34 W Shoes Product 4', {
+                chat_id: msg.from.id, 
+                message_id: savedText1.message_id
+            }).then((sendedMsg) => {
+                savedText1 = sendedMsg;
+            });          
+            await bot.editMessageText('30-34 W Shoes Product 5', {
+                chat_id: msg.from.id, 
+                message_id: savedText2.message_id
+            }).then((sendedMsg) => {
+                savedText2 = sendedMsg;
+            });          
+            await bot.editMessageText('30-34 W Shoes Product 6', {
+               chat_id: msg.from.id, 
+               message_id: savedText3.message_id
+            }).then((sendedMsg) => {
+               savedText3 = sendedMsg;
+            });          
+            await bot.editMessageText('30-34 W Shoes Page 2', {
+               chat_id: msg.from.id, 
+               message_id: savedPageText.message_id
+            }).then((sendedMsg) => {
+               savedPageText = sendedMsg;
+            });
+          
+            return bot.editMessageReplyMarkup({
+                inline_keyboard: [
+                    [
+                        {text: '<<', callback_data: 'productPageBack2'}, {text: 'Page 2', callback_data: 'productpage2'}, {text: '>>', callback_data: 'productPageNext2'},
+                    ]
+                ]
+        }, {
+            chat_id: msg.from.id, 
+            message_id: msg.message.message_id
+        });
         }
-        await user.save();
+        if (data === 'productPageNext2') {
+            return bot.editMessageReplyMarkup({
+                inline_keyboard: [
+                    [
+                        {text: '<<', callback_data: 'productPageBack3'}, {text: 'Page 3', callback_data: 'productpage3'}, {text: '>>', callback_data: 'productPageNext3'},
+                    ]
+                ]
+        },  {
+            chat_id: msg.from.id, 
+            message_id: msg.message.message_id
+        });
+        }
+        if (data === 'productPageBack2') {
+            await bot.editMessageText('30-34 W Shoes Product 1', {
+                chat_id: msg.from.id, 
+                message_id: savedText1.message_id
+            }).then((sendedMsg) => {
+                savedText1 = sendedMsg;
+            });          
+            await bot.editMessageText('30-34 W Shoes Product 2', {
+                chat_id: msg.from.id, 
+                message_id: savedText2.message_id
+            }).then((sendedMsg) => {
+                savedText2 = sendedMsg;
+            });          
+            await bot.editMessageText('30-34 W Shoes Product 3', {
+               chat_id: msg.from.id, 
+               message_id: savedText3.message_id
+            }).then((sendedMsg) => {
+               savedText3 = sendedMsg;
+            });
+            await bot.editMessageText('30-34 W Shoes Page 1', {
+                chat_id: msg.from.id, 
+                message_id: savedPageText.message_id
+             }).then((sendedMsg) => {
+                savedPageText = sendedMsg;
+             });
+            return bot.editMessageReplyMarkup({
+                inline_keyboard: [
+                    [
+                        {text: 'Page 1', callback_data: 'productpage1'}, {text: '>>', callback_data: 'productPageNext1'},
+                    ]
+                ]
+            }, {
+            chat_id: msg.from.id, 
+            message_id: msg.message.message_id
+            });
+        }
+        if (data === 'productPageBack3') {
+            return bot.editMessageReplyMarkup({
+                inline_keyboard: [
+                    [
+                        {text: '<<', callback_data: 'productPageBack2'}, {text: 'Page 2', callback_data: 'productpage2'}, {text: '>>', callback_data: 'productPageNext2'},
+                    ]
+                ]
+        }, {
+            chat_id: msg.from.id, 
+            message_id: msg.message.message_id
+        });
+        }
+        if (data === 'testEditText') {
+            return bot.editMessageText('testEditText111', {
+                chat_id: msg.from.id, 
+                message_id: savedText1.message_id
+            }).then((sendedMsg) => {
+                savedText1 = sendedMsg;
+           });
+        }
+
+        console.log(data)
+//        const user = await UserModel.findOne({ where: { chatId: chatId.toString() } })
+//        if (data == chats[chatId]) {
+//            user.right += 1;
+//            await bot.sendMessage(chatId, `You've chosen: ${data}, bot made: ${chats[chatId]}`);
+//            await bot.sendMessage(chatId, `Conratulations! Your are lucky today :)`, againOptions);
+//        } 
+//        if  (data !== chats[chatId]) {
+//            user.wrong += 1;
+//            await bot.sendMessage(chatId, `You've chosen: ${data}, bot made: ${chats[chatId]}`);
+//            await bot.sendMessage(chatId, `Missed :(`);  
+//            await bot.sendMessage(chatId, `Play again to try your luck one more time! :)`, againOptions);
+//        }
+//        await user.save();
+        
     })
 }
 
